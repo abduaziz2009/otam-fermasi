@@ -1,0 +1,323 @@
+/*
+  Otam Fermasi - Maxsus uslublar (Styles)
+  Ranglar palitrasi: Oq (Asosiy), Zangori/Yashil (Maysazor va baraka), Iliq jigarrang (Mo''tadil yer va yog'och tuslari)
+*/
+
+:root {
+  /* Oq va yengil fonlar */
+  --bg-main: #f8faf7;
+  --bg-card: #ffffff;
+  --bg-card-hover: #f5f8f3;
+  --border-light: #e5ebe1;
+  --border-subtle: #dbe3d6;
+
+  /* Zangori Yashil (Pasture Green) */
+  --green-primary: #15803d;
+  --green-hover: #166534;
+  --green-light: #dcfce7;
+  --green-soft: #f0fdf4;
+  --green-text: #14532d;
+
+  /* Iliq Jigarrang va Qaymoqrang (Earthen & Wood Accents - Tastefully subtle) */
+  --brown-accent: #854d0e;
+  --brown-hover: #713f12;
+  --brown-light: #fef3c7;
+  --brown-border: #d7c5ad;
+  --brown-soft: #faf7f2;
+  --brown-badge-bg: #f5ede2;
+  --brown-badge-text: #6b3f11;
+
+  /* Matn ranglari */
+  --text-primary: #1e293b;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+  --text-on-green: #ffffff;
+
+  /* Xavf va ogohlantirish */
+  --danger-bg: #fee2e2;
+  --danger-text: #991b1b;
+  --warning-bg: #fef9c3;
+  --warning-text: #854d0e;
+
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.04);
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background-color: var(--bg-main);
+  color: var(--text-primary);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Header & Top Bar */
+.top-header {
+  background-color: var(--bg-card);
+  border-bottom: 2px solid var(--border-light);
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  box-shadow: var(--shadow-sm);
+}
+
+.brand-badge {
+  background: linear-gradient(135deg, var(--green-soft) 0%, var(--brown-soft) 100%);
+  border: 1px solid var(--border-light);
+}
+
+/* User Switcher Pill */
+.user-switch-btn {
+  transition: all 0.2s ease;
+}
+
+.user-switch-btn.active-me {
+  background-color: var(--green-primary);
+  color: white;
+  box-shadow: 0 2px 4px rgba(21, 128, 61, 0.25);
+}
+
+.user-switch-btn.active-brother {
+  background-color: var(--brown-accent);
+  color: white;
+  box-shadow: 0 2px 4px rgba(133, 77, 14, 0.25);
+}
+
+/* Language Toggle */
+.lang-toggle-btn.active {
+  background-color: var(--green-primary);
+  color: white;
+  font-weight: 600;
+}
+
+/* Navigation Tabs */
+.nav-tab {
+  color: var(--text-muted);
+  border-bottom: 2px solid transparent;
+  transition: all 0.15s ease;
+  font-weight: 500;
+}
+
+.nav-tab:hover {
+  color: var(--green-primary);
+  border-color: var(--border-subtle);
+}
+
+.nav-tab.active {
+  color: var(--green-primary);
+  border-bottom-color: var(--green-primary);
+  font-weight: 600;
+}
+
+/* Cards & Panels */
+.farm-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.farm-card:hover {
+  border-color: var(--border-subtle);
+  box-shadow: var(--shadow-md);
+}
+
+.farm-card-accent {
+  border-left: 4px solid var(--green-primary);
+}
+
+.farm-card-earth {
+  border-left: 4px solid var(--brown-accent);
+}
+
+/* Stat Widgets */
+.stat-icon-green {
+  background-color: var(--green-light);
+  color: var(--green-primary);
+}
+
+.stat-icon-brown {
+  background-color: var(--brown-badge-bg);
+  color: var(--brown-accent);
+}
+
+/* Tables */
+.farm-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.farm-table th {
+  background-color: #f7faf5;
+  color: var(--text-secondary);
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.farm-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border-light);
+  font-size: 0.875rem;
+}
+
+.farm-table tr:hover td {
+  background-color: var(--bg-card-hover);
+}
+
+/* Buttons */
+.btn-primary {
+  background-color: var(--green-primary);
+  color: white;
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  padding: 8px 16px;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid transparent;
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  background-color: var(--green-hover);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-secondary {
+  background-color: var(--bg-card);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 8px 16px;
+  font-weight: 500;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.15s ease;
+}
+
+.btn-secondary:hover {
+  background-color: var(--bg-main);
+  border-color: var(--border-subtle);
+  color: var(--text-primary);
+}
+
+.btn-earth {
+  background-color: var(--brown-soft);
+  color: var(--brown-accent);
+  border: 1px solid var(--brown-border);
+  border-radius: var(--radius-md);
+  padding: 8px 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-earth:hover {
+  background-color: var(--brown-light);
+}
+
+/* Badges */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.badge-green {
+  background-color: var(--green-light);
+  color: var(--green-text);
+}
+
+.badge-brown {
+  background-color: var(--brown-badge-bg);
+  color: var(--brown-badge-text);
+  border: 1px solid rgba(133, 77, 14, 0.15);
+}
+
+.badge-yellow {
+  background-color: var(--warning-bg);
+  color: var(--warning-text);
+}
+
+.badge-red {
+  background-color: var(--danger-bg);
+  color: var(--danger-text);
+}
+
+/* Modals */
+.modal-overlay {
+  background-color: rgba(15, 23, 42, 0.5);
+  backdrop-filter: blur(2px);
+}
+
+/* Form Controls */
+.form-input, .form-select, .form-textarea {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background-color: white;
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+  outline: none;
+  border-color: var(--green-primary);
+  box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.15);
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Print Styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  body {
+    background: white;
+  }
+  .farm-card {
+    border: 1px solid #ccc;
+    box-shadow: none;
+  }
+}

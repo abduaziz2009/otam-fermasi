@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Otam Fermasi - Qo'ychilik va Yem-Xashak Hisob Tizimi</title>
+  <!-- Tailwind CSS CDN for utility classes -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Custom Styles: White, Green and Tasteful Subtle Brown -->
+  <link rel="stylesheet" href="css/styles.css">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            farmgreen: {
+              50: '#f0fdf4',
+              100: '#dcfce7',
+              500: '#22c55e',
+              600: '#16a34a',
+              700: '#15803d',
+              800: '#166534',
+              900: '#14532d',
+            },
+            farmbrown: {
+              50: '#faf7f2',
+              100: '#f5ede2',
+              200: '#e8dbca',
+              500: '#b45309',
+              600: '#92400e',
+              700: '#78350f',
+              800: '#5c2b09',
+            }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="min-h-screen flex flex-col bg-[#f8faf7] text-slate-800">
+
+  <!-- ================= TOP HEADER ================= -->
+  <header class="top-header no-print">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-20">
+        
+        <!-- Logo & Farm Title -->
+        <div class="flex items-center gap-3">
+          <div class="w-12 h-12 rounded-xl brand-badge flex items-center justify-center shadow-sm border border-emerald-200">
+            <!-- Sheep / Farm Crest Icon -->
+            <svg class="w-7 h-7 text-emerald-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2a4 4 0 0 0-4 4v1H7a4 4 0 0 0-4 4v1a4 4 0 0 0 3 3.87V19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-3.13A4 4 0 0 0 21 12v-1a4 4 0 0 0-4-4h-1V6a4 4 0 0 0-4-4Z"/>
+              <circle cx="9" cy="10" r="1" fill="currentColor"/>
+              <circle cx="15" cy="10" r="1" fill="currentColor"/>
+              <path d="M9.5 15a3.5 3.5 0 0 0 5 0"/>
+            </svg>
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-emerald-900" data-i18n="appName">Otam Fermasi</h1>
+              <span class="text-[11px] px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-semibold border border-emerald-200">2026</span>
+            </div>
+            <p class="text-xs text-slate-500 font-medium hidden sm:block" data-i18n="appSubtitle">Qo'ychilik xo'jaligi va yem-xashak hisob tizimi</p>
+          </div>
+        </div>
+
+        <!-- Right Header Controls: Two-User Switcher & Language Switcher -->
+        <div class="flex items-center gap-3 sm:gap-4">
+          
+          <!-- User Profile Switcher (Brother & Me) -->
+          <div class="flex items-center bg-white p-1 rounded-xl border border-slate-200 shadow-sm">
+            <span class="text-xs text-slate-400 font-medium px-2 hidden md:inline" data-i18n="activeUser">Foydalanuvchi:</span>
+            <button id="user-btn-brother" class="user-switch-btn px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 text-slate-600 hover:text-slate-900" onclick="app.switchUser('brother')">
+              <span class="w-2 h-2 rounded-full bg-amber-600"></span>
+              <span data-i18n="brother">Katta akam</span>
+            </button>
+            <button id="user-btn-me" class="user-switch-btn px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 text-slate-600 hover:text-slate-900" onclick="app.switchUser('me')">
+              <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
+              <span data-i18n="me">Men</span>
+            </button>
+          </div>
+
+          <!-- Language Selector (Uzbek / Russian) -->
+          <div class="flex items-center bg-white p-1 rounded-xl border border-slate-200 shadow-sm">
+            <button id="lang-btn-uz" class="lang-toggle-btn px-2.5 py-1 rounded-lg text-xs font-medium text-slate-600 transition-colors" onclick="app.switchLanguage('uz')">
+              🇺🇿 O'zbek
+            </button>
+            <button id="lang-btn-ru" class="lang-toggle-btn px-2.5 py-1 rounded-lg text-xs font-medium text-slate-600 transition-colors" onclick="app.switchLanguage('ru')">
+              🇷🇺 Русский
+            </button>
+          </div>
+
+          <!-- Data backup dropdown/action -->
+          <div class="relative group hidden sm:block">
+            <button class="p-2 text-slate-500 hover:text-slate-700 bg-white rounded-lg border border-slate-200 hover:bg-slate-50 shadow-sm" title="Zaxira / Резервная копия">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+              </svg>
+            </button>
+            <div class="absolute right-0 mt-1 w-56 bg-white rounded-xl shadow-lg border border-slate-200 py-1 hidden group-hover:block z-50">
+              <button onclick="store.exportToJson()" class="w-full text-left px-4 py-2 text-xs text-slate-700 hover:bg-slate-50 flex items-center gap-2">
+                <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                <span data-i18n="exportData">Zaxirani yuklab olish (JSON)</span>
+              </button>
+              <button onclick="app.exportPurchasesCsv()" class="w-full text-left px-4 py-2 text-xs text-slate-700 hover:bg-slate-50 flex items-center gap-2">
+                <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                <span data-i18n="exportCsv">Excel/CSV yuklash</span>
+              </button>
+              <hr class="my-1 border-slate-100">
+              <button onclick="app.openImportModal()" class="w-full text-left px-4 py-2 text-xs text-slate-700 hover:bg-slate-50 flex items-center gap-2">
+                <svg class="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+                <span data-i18n="importData">Fayldan tiklash</span>
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Navigation Tabs Bar -->
+      <nav class="flex space-x-1 sm:space-x-8 overflow-x-auto pb-px border-t border-slate-100 pt-1 text-sm font-medium">
+        <button onclick="app.setTab('overview')" id="tab-overview" class="nav-tab py-3 px-2 sm:px-1 flex items-center gap-2 whitespace-nowrap active">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+          <span data-i18n="navOverview">Umumiy ko'rinish</span>
+        </button>
+        <button onclick="app.setTab('flock')" id="tab-flock" class="nav-tab py-3 px-2 sm:px-1 flex items-center gap-2 whitespace-nowrap">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+          <span data-i18n="navFlock">Suruv (Qo'ylar)</span>
+        </button>
+        <button onclick="app.setTab('calculator')" id="tab-calculator" class="nav-tab py-3 px-2 sm:px-1 flex items-center gap-2 whitespace-nowrap">
+          <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+          <span data-i18n="navCalculator">Yem-Xashak Hisoblagich</span>
+        </button>
+        <button onclick="app.setTab('purchases')" id="tab-purchases" class="nav-tab py-3 px-2 sm:px-1 flex items-center gap-2 whitespace-nowrap">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+          <span data-i18n="navPurchases">Ta'minot xaridlari</span>
+        </button>
+        <button onclick="app.setTab('stock')" id="tab-stock" class="nav-tab py-3 px-2 sm:px-1 flex items-center gap-2 whitespace-nowrap">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+          <span data-i18n="navStock">Ombor zaxirasi</span>
+        </button>
+        <button onclick="app.setTab('reports')" id="tab-reports" class="nav-tab py-3 px-2 sm:px-1 flex items-center gap-2 whitespace-nowrap">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+          <span data-i18n="navReports">Oylik hisobot</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ================= MAIN CONTENT CONTAINER ================= -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6">
+
+    <!-- TAB 1: OVERVIEW / DASHBOARD -->
+    <section id="section-overview" class="space-y-6">
+      
+      <!-- Top Metrics Row -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        
+        <!-- Total Flock Widget -->
+        <div class="farm-card p-5 farm-card-accent">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider" data-i18n="totalFlock">Jami qo'ylar soni</span>
+            <div class="w-9 h-9 rounded-lg stat-icon-green flex items-center justify-center">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+            </div>
+          </div>
+          <div class="mt-3 flex items-baseline gap-2">
+            <span id="dash-total-sheep" class="text-3xl font-extrabold text-slate-900">0</span>
+            <span class="text-sm font-medium text-slate-500" data-i18n="headCount">bosh</span>
+          </div>
+          <p class="mt-1 text-xs text-emerald-700 font-medium flex items-center gap-1">
+            <span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+            <span id="dash-flock-sub">Sovliqlar, Qo'chqorlar, Qo'zilar</span>
+          </p>
+        </div>
+
+        <!-- Monthly Feed Estimated Cost -->
+        <div class="farm-card p-5 farm-card-accent">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider" data-i18n="monthlyFeedCostEst">Oylik yem ehtiyoji</span>
+            <div class="w-9 h-9 rounded-lg stat-icon-green flex items-center justify-center">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+            </div>
+          </div>
+          <div class="mt-3 flex items-baseline gap-1">
+            <span id="dash-monthly-feed-cost" class="text-2xl font-extrabold text-slate-900">0</span>
+            <span class="text-xs font-medium text-slate-500" data-i18n="currency">so'm</span>
+          </div>
+          <p class="mt-1 text-xs text-slate-500">
+            <span id="dash-monthly-feed-ton">0</span> <span data-i18n="tonUnit">t</span> yem-xashak (30 kun)
+          </p>
+        </div>
+
+        <!-- Total Supplies Purchased this month -->
+        <div class="farm-card p-5 farm-card-earth">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider" data-i18n="totalSuppliesThisMonth">Bu oydagi xaridlar</span>
+            <div class="w-9 h-9 rounded-lg stat-icon-brown flex items-center justify-center">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+            </div>
+          </div>
+          <div class="mt-3 flex items-baseline gap-1">
+            <span id="dash-monthly-spending" class="text-2xl font-extrabold text-slate-900">0</span>
+            <span class="text-xs font-medium text-slate-500" data-i18n="currency">so'm</span>
+          </div>
+          <p class="mt-1 text-xs text-slate-500" id="dash-purchases-count">
+            0 ta xarid kiritilgan
+          </p>
+        </div>
+
+        <!-- Brother & Me Shared Balance -->
+        <div class="farm-card p-5 farm-card-earth">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider" data-i18n="sharedSpendingTotal">Aka-uka balansi</span>
+            <div class="w-9 h-9 rounded-lg stat-icon-brown flex items-center justify-center">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+          </div>
+          <div class="mt-3 text-xs space-y-1">
+            <div class="flex justify-between">
+              <span class="text-slate-500" data-i18n="brother">Katta akam:</span>
+              <strong id="dash-brother-spent" class="text-emerald-800">0 so'm</strong>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-slate-500" data-i18n="me">Men:</span>
+              <strong id="dash-me-spent" class="text-amber-800">0 so'm</strong>
+            </div>
+          </div>
+          <div class="mt-2 pt-2 border-t border-slate-100 text-[11px] font-medium" id="dash-settlement-badge">
+            Balans teng
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Quick Actions and Stock Alerts Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <!-- Stock Runway & Alerts -->
+        <div class="lg:col-span-2 farm-card p-6">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h2 class="text-base font-bold text-slate-900" data-i18n="stockAlertTitle">Ombor zaxira holati</h2>
+              <p class="text-xs text-slate-500" data-i18n="stockSubtitle">Ombordagi qoldiq miqdor va sarflanish dinamikasi</p>
+            </div>
+            <button onclick="app.setTab('stock')" class="btn-secondary text-xs py-1.5 px-3">
+              <span data-i18n="navStock">Omborga o'tish</span>
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            </button>
+          </div>
+
+          <!-- Stock Runway Progress Bars Container -->
+          <div id="dash-stock-runway-list" class="space-y-4">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+
+        <!-- Quick Actions Card & Active User Status -->
+        <div class="farm-card p-6 flex flex-col justify-between">
+          <div>
+            <h2 class="text-base font-bold text-slate-900 mb-1" data-i18n="quickActions">Tezkor amallar</h2>
+            <p class="text-xs text-slate-500 mb-4">Bir bosishda yangi ma'lumot kiritish</p>
+            
+            <div class="space-y-2.5">
+              <button onclick="app.openNewPurchaseModal()" class="w-full btn-primary justify-center py-2.5 text-sm shadow-sm">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                <span data-i18n="newPurchaseBtn">Yangi xarid qo'shish</span>
+              </button>
+
+              <button onclick="app.setTab('calculator')" class="w-full btn-secondary justify-center py-2.5 text-sm">
+                <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                <span data-i18n="calculateFeedBtn">Yem hisoblash</span>
+              </button>
+
+              <button onclick="app.setTab('flock')" class="w-full btn-secondary justify-center py-2.5 text-sm">
+                <svg class="w-4 h-4 text-amber-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+                <span data-i18n="updateFlockBtn">Suruvni yangilash</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Active User Card Banner -->
+          <div class="mt-6 p-3.5 rounded-xl bg-slate-50 border border-slate-200 flex items-center gap-3">
+            <div id="dash-user-avatar" class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-white text-sm bg-emerald-600 flex-shrink-0">
+              M
+            </div>
+            <div class="text-xs">
+              <span class="text-slate-400 block" data-i18n="activeUser">Faol foydalanuvchi:</span>
+              <strong id="dash-user-name" class="text-slate-800 text-sm">Men</strong>
+              <p class="text-[11px] text-slate-500">Kiritilgan xaridlar shu nom bilan yoziladi</p>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- Recent Purchases Preview Table -->
+      <div class="farm-card p-6">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h2 class="text-base font-bold text-slate-900" data-i18n="purchasesTitle">So'nggi ta'minot xaridlari</h2>
+            <p class="text-xs text-slate-500" data-i18n="purchasesSubtitle">Fermaga sotib olingan yem, dori va anjomlar</p>
+          </div>
+          <button onclick="app.setTab('purchases')" class="btn-secondary text-xs py-1.5 px-3">
+            <span data-i18n="all">Barchasini ko'rish</span>
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+          </button>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="farm-table">
+            <thead>
+              <tr>
+                <th data-i18n="date">Sana</th>
+                <th data-i18n="purchaseName">Nomi</th>
+                <th data-i18n="purchaseCategory">Toifa</th>
+                <th data-i18n="quantity">Miqdori</th>
+                <th data-i18n="totalPrice">Jami</th>
+                <th data-i18n="paidBy">Kim to'ladi</th>
+              </tr>
+            </thead>
+            <tbody id="dash-recent-purchases-tbody">
+              <!-- Rendered dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- TAB 2: FLOCK MANAGEMENT -->
+    <section id="section-flock" class="space-y-6 hidden">
+      <div class="farm-card p-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-5">
+          <div>
+            <h2 class="text-xl font-bold text-slate-900" data-i18n="flockTitle">Qo'ylar suruvi tarkibi</h2>
+            <p class="text-xs text-slate-500 mt-1" data-i18n="flockSubtitle">Otaradagi qo'ylar toifalari va soni</p>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="text-sm font-semibold text-slate-600" data-i18n="totalFlock">Jami qo'ylar:</span>
+            <span id="flock-tab-total-badge" class="px-3 py-1 bg-emerald-100 text-emerald-800 font-extrabold rounded-lg text-lg border border-emerald-200">
+              0 bosh
+            </span>
+          </div>
+        </div>
+
+        <!-- Flock categories list/cards -->
+        <div id="flock-categories-container" class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+          <!-- Populated dynamically -->
+        </div>
+
+        <!-- Flock info alert box -->
+        <div class="mt-6 p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-900 flex items-start gap-3">
+          <svg class="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          <div>
+            <strong class="font-semibold block mb-0.5" data-i18n="flockSummaryDesc">Suruvdagi qo'ylar soni yem-xashak miqdorini hisoblashda avtomatik ishlatiladi.</strong>
+            <span>Qo'zilar tug'ilganda, qo'ylar sotilganda yoki so'yilganda bosh sonini shu sahifada to'g'rilang, shunda oylik yem ehtiyoji ham darhol qayta hisoblanadi.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 3: FEED & GRAIN CALCULATOR -->
+    <section id="section-calculator" class="space-y-6 hidden">
+      
+      <!-- Calculator Controls & Header -->
+      <div class="farm-card p-6">
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-slate-100 pb-5">
+          <div>
+            <div class="flex items-center gap-2">
+              <h2 class="text-xl font-bold text-slate-900" data-i18n="calcTitle">Oylik yem va don iste'moli hisoblagichi</h2>
+              <span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 text-xs font-semibold rounded-full border border-emerald-200">Avto-hisob</span>
+            </div>
+            <p class="text-xs text-slate-500 mt-1" data-i18n="calcSubtitle">Suruv soni va kunlik ratsion asosida 1 oylik zaruriy yem miqdori</p>
+          </div>
+
+          <!-- Controls: Days in month & Presets -->
+          <div class="flex flex-wrap items-center gap-3">
+            <div class="flex items-center gap-2 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-200">
+              <label for="calc-days-input" class="text-xs font-medium text-slate-600" data-i18n="daysInMonth">Davr (kun):</label>
+              <input type="number" id="calc-days-input" value="30" min="1" max="365" class="w-16 px-2 py-1 bg-white border border-slate-300 rounded text-center text-xs font-bold" onchange="app.recalculateFeed()">
+            </div>
+
+            <div class="flex items-center gap-2 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-200">
+              <label for="calc-preset-select" class="text-xs font-medium text-slate-600" data-i18n="loadPreset">Ratsion:</label>
+              <select id="calc-preset-select" class="text-xs bg-white border border-slate-300 rounded px-2 py-1 font-medium" onchange="app.changePreset(this.value)">
+                <option value="standard" data-i18n="rationPresetStandard">Standart qishki ratsion</option>
+                <option value="fattening" data-i18n="rationPresetFattening">Bo'rdoqi (semirtirish) ratsioni</option>
+                <option value="pasture" data-i18n="rationPresetPasture">Yozgi / Yaylov ratsioni</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Grand Total Summary Highlights -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 my-6">
+          <div class="p-4 rounded-xl bg-emerald-50 border border-emerald-200">
+            <span class="text-xs text-emerald-800 font-medium block" data-i18n="dailyTotalFlock">Suruv uchun kunlik jami:</span>
+            <div class="flex items-baseline gap-1 mt-1">
+              <span id="calc-grand-daily-kg" class="text-2xl font-extrabold text-emerald-900">0</span>
+              <span class="text-xs font-semibold text-emerald-700">kg / kun</span>
+            </div>
+          </div>
+          <div class="p-4 rounded-xl bg-emerald-50 border border-emerald-200">
+            <span class="text-xs text-emerald-800 font-medium block" data-i18n="monthlyTotalNeeded">Oylik zarur miqdor:</span>
+            <div class="flex items-baseline gap-1 mt-1">
+              <span id="calc-grand-monthly-ton" class="text-2xl font-extrabold text-emerald-900">0</span>
+              <span class="text-xs font-semibold text-emerald-700">tonna (<span id="calc-grand-monthly-kg">0</span> kg)</span>
+            </div>
+          </div>
+          <div class="p-4 rounded-xl bg-amber-50 border border-amber-200">
+            <span class="text-xs text-amber-800 font-medium block" data-i18n="feedCostEst">Oylik xarajat (taxminan):</span>
+            <div class="flex items-baseline gap-1 mt-1">
+              <span id="calc-grand-monthly-cost" class="text-2xl font-extrabold text-amber-900">0</span>
+              <span class="text-xs font-semibold text-amber-700" data-i18n="currency">so'm</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Detailed Consumption Breakdown Table -->
+        <div class="overflow-x-auto">
+          <table class="farm-table">
+            <thead>
+              <tr>
+                <th data-i18n="feedItem">Yem / Don turi</th>
+                <th data-i18n="dailyTotalFlock">Kunlik sarf</th>
+                <th data-i18n="monthlyTotalNeeded">Oylik ehtiyoj</th>
+                <th data-i18n="currentStock">Ombordagi zaxira</th>
+                <th data-i18n="stockRunway">Yetadi (kun)</th>
+                <th data-i18n="feedCostEst">Oylik xarajat</th>
+                <th data-i18n="status">Holat</th>
+              </tr>
+            </thead>
+            <tbody id="calc-breakdown-tbody">
+              <!-- Populated dynamically -->
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- TAB 4: SUPPLY PURCHASES & EXPENSES -->
+    <section id="section-purchases" class="space-y-6 hidden">
+      <div class="farm-card p-6">
+        
+        <!-- Header with Add Button and Search Filters -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-100 pb-5">
+          <div>
+            <h2 class="text-xl font-bold text-slate-900" data-i18n="purchasesTitle">Ta'minot xaridlari va xarajatlar</h2>
+            <p class="text-xs text-slate-500 mt-1" data-i18n="purchasesSubtitle">Yem, don, dori va boshqa ta'minot xaridlarini qayd etish</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="app.openNewPurchaseModal()" class="btn-primary text-sm py-2 px-4 shadow-sm">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+              <span data-i18n="newPurchaseBtn">Yangi xarid qo'shish</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Filter Bar -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 my-4">
+          <div>
+            <input type="text" id="purchases-search-input" placeholder="Qidirish (mahsulot, sotuvchi)..." class="form-input text-xs" oninput="app.filterPurchases()">
+          </div>
+          <div>
+            <select id="purchases-cat-filter" class="form-select text-xs" onchange="app.filterPurchases()">
+              <option value="" data-i18n="all">Barcha toifalar</option>
+              <option value="catFeedGrain" data-i18n="catFeedGrain">Yem va Don xaridi</option>
+              <option value="catRoughage" data-i18n="catRoughage">Beda va Somon (Dastor)</option>
+              <option value="catMedicine" data-i18n="catMedicine">Dori-darmon va Vaksina</option>
+              <option value="catLivestock" data-i18n="catLivestock">Qo'y sotib olish</option>
+              <option value="catEquipment" data-i18n="catEquipment">Asbob-uskuna va Inventar</option>
+              <option value="catMaintenance" data-i18n="catMaintenance">Qo'ra ta'miri va Qurilish</option>
+              <option value="catLogistics" data-i18n="catLogistics">Transport va Yoqilg'i</option>
+              <option value="catLabor" data-i18n="catLabor">Cho'pon / Ish haqi</option>
+              <option value="catOther" data-i18n="catOther">Boshqa xarajatlar</option>
+            </select>
+          </div>
+          <div>
+            <select id="purchases-payer-filter" class="form-select text-xs" onchange="app.filterPurchases()">
+              <option value="" data-i18n="filterByPayer">Kim to'lagan (Barchasi)</option>
+              <option value="brother" data-i18n="brother">Katta akam</option>
+              <option value="me" data-i18n="me">Men</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Full Purchases Table -->
+        <div class="overflow-x-auto">
+          <table class="farm-table">
+            <thead>
+              <tr>
+                <th data-i18n="date">Sana</th>
+                <th data-i18n="purchaseName">Mahsulot nomi</th>
+                <th data-i18n="purchaseCategory">Toifa</th>
+                <th data-i18n="supplier">Sotuvchi</th>
+                <th data-i18n="quantity">Miqdori</th>
+                <th data-i18n="unitPrice">Birlik narxi</th>
+                <th data-i18n="totalPrice">Jami summa</th>
+                <th data-i18n="paymentMethod">To'lov</th>
+                <th data-i18n="paidBy">Kim to'ladi</th>
+                <th class="text-right" data-i18n="actions">Amallar</th>
+              </tr>
+            </thead>
+            <tbody id="purchases-full-tbody">
+              <!-- Populated dynamically -->
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- TAB 5: INVENTORY / STOCK -->
+    <section id="section-stock" class="space-y-6 hidden">
+      <div class="farm-card p-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-5">
+          <div>
+            <h2 class="text-xl font-bold text-slate-900" data-i18n="stockTitle">Yem-Xashak ombori zaxirasi</h2>
+            <p class="text-xs text-slate-500 mt-1" data-i18n="stockSubtitle">Ombordagi qoldiq miqdor va sarflanish dinamikasi</p>
+          </div>
+        </div>
+
+        <div id="stock-items-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
+          <!-- Populated dynamically with stock adjustment cards -->
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 6: MONTHLY REPORTS & ANALYTICS -->
+    <section id="section-reports" class="space-y-6 hidden">
+      
+      <div class="farm-card p-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-5">
+          <div>
+            <h2 class="text-xl font-bold text-slate-900" data-i18n="reportsTitle">Oylik tahlil va moliya hisoboti</h2>
+            <p class="text-xs text-slate-500 mt-1" data-i18n="reportsSubtitle">Xarajatlar tarkibi va aka-uka o'rtasidagi hisob-kitob</p>
+          </div>
+          <div class="flex items-center gap-3">
+            <label for="reports-month-select" class="text-xs font-semibold text-slate-600" data-i18n="selectMonth">Oyni tanlang:</label>
+            <input type="month" id="reports-month-select" class="text-xs form-input py-1 px-3 w-auto" onchange="app.renderReports()">
+          </div>
+        </div>
+
+        <!-- Monthly Key Financial Indicators -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 my-6">
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+            <span class="text-xs text-slate-500 font-medium block" data-i18n="totalSuppliesThisMonth">Bu oydagi xaridlar jami:</span>
+            <span id="rep-grand-total" class="text-2xl font-extrabold text-slate-900 mt-1 block">0 so'm</span>
+            <span id="rep-purchases-count" class="text-xs text-slate-400">0 ta tranzaksiya</span>
+          </div>
+          <div class="p-4 rounded-xl bg-emerald-50 border border-emerald-200">
+            <span class="text-xs text-emerald-800 font-medium block" data-i18n="brotherSpending">Katta akam xarajatlari:</span>
+            <span id="rep-brother-total" class="text-2xl font-extrabold text-emerald-900 mt-1 block">0 so'm</span>
+            <span id="rep-brother-pct" class="text-xs text-emerald-700 font-medium">0% umumiy xarajatdan</span>
+          </div>
+          <div class="p-4 rounded-xl bg-amber-50 border border-amber-200">
+            <span class="text-xs text-amber-800 font-medium block" data-i18n="mySpending">Mening xarajatlarim:</span>
+            <span id="rep-my-total" class="text-2xl font-extrabold text-amber-900 mt-1 block">0 so'm</span>
+            <span id="rep-my-pct" class="text-xs text-amber-700 font-medium">0% umumiy xarajatdan</span>
+          </div>
+        </div>
+
+        <!-- Settlement banner between brothers -->
+        <div id="rep-settlement-card" class="p-4 rounded-xl border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-6">
+          <!-- Populated dynamically -->
+        </div>
+
+        <!-- Charts Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+          
+          <!-- Category Breakdown Donut Chart -->
+          <div class="p-4 rounded-xl bg-white border border-slate-200">
+            <h3 class="text-sm font-bold text-slate-800 mb-4" data-i18n="categoryBreakdown">Toifalar bo'yicha xarajat taqsimoti</h3>
+            <div id="rep-donut-container" class="min-h-[200px]">
+              <!-- Rendered via FarmCharts -->
+            </div>
+          </div>
+
+          <!-- Brother vs Me Spending Comparison Bar -->
+          <div class="p-4 rounded-xl bg-white border border-slate-200 flex flex-col justify-between">
+            <div>
+              <h3 class="text-sm font-bold text-slate-800 mb-4" data-i18n="spendingComparison">Aka-uka xarajatlari taqqoslanishi</h3>
+              <div id="rep-comparison-container" class="mt-4">
+                <!-- Rendered via FarmCharts -->
+              </div>
+            </div>
+
+            <div class="mt-8 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+              <span data-i18n="costPerSheep">1 bosh qo'yga o'rtacha xarajat:</span>
+              <strong id="rep-cost-per-sheep" class="text-sm font-bold text-slate-800">0 so'm</strong>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- ================= MODAL: ADD / EDIT PURCHASE ================= -->
+  <div id="modal-purchase" class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay hidden">
+    <div class="bg-white rounded-2xl shadow-xl max-w-lg w-full overflow-hidden border border-slate-200 animate-in fade-in zoom-in duration-200">
+      <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+        <h3 id="modal-purchase-title" class="font-bold text-slate-800 text-base" data-i18n="addNewPurchaseModal">Yangi ta'minot xaridini kiritish</h3>
+        <button onclick="app.closePurchaseModal()" class="text-slate-400 hover:text-slate-600">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <form id="purchase-form" onsubmit="app.handlePurchaseSubmit(event)" class="p-6 space-y-4">
+        
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1" data-i18n="purchaseName">Mahsulot nomi *</label>
+          <input type="text" id="p-form-name" required placeholder="Masalan: 2 Tonna Arpa yoki 100 bog' Beda" class="form-input text-xs">
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1" data-i18n="purchaseCategory">Toifasi *</label>
+            <select id="p-form-category" required class="form-select text-xs" onchange="app.handlePurchaseCategoryChange(this.value)">
+              <option value="catFeedGrain" data-i18n="catFeedGrain">Yem va Don xaridi</option>
+              <option value="catRoughage" data-i18n="catRoughage">Beda va Somon (Dastor)</option>
+              <option value="catMedicine" data-i18n="catMedicine">Dori-darmon va Vaksina</option>
+              <option value="catLivestock" data-i18n="catLivestock">Qo'y sotib olish</option>
+              <option value="catEquipment" data-i18n="catEquipment">Asbob-uskuna va Inventar</option>
+              <option value="catMaintenance" data-i18n="catMaintenance">Qo'ra ta'miri va Qurilish</option>
+              <option value="catLogistics" data-i18n="catLogistics">Transport va Yoqilg'i</option>
+              <option value="catLabor" data-i18n="catLabor">Cho'pon / Ish haqi</option>
+              <option value="catOther" data-i18n="catOther">Boshqa xarajatlar</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1" data-i18n="date">Sana *</label>
+            <input type="date" id="p-form-date" required class="form-input text-xs">
+          </div>
+        </div>
+
+        <!-- Optional Link to Inventory Feed item -->
+        <div id="p-form-feed-link-container">
+          <label class="block text-xs font-semibold text-slate-700 mb-1" data-i18n="feedItem">Ombordagi yem bilan bog'lash</label>
+          <select id="p-form-feed-item" class="form-select text-xs">
+            <option value="">-- Bog'lanmagan / Alohida mahsulot --</option>
+            <option value="barley" data-i18n="feedBarley">Arpa (Don)</option>
+            <option value="alfalfa" data-i18n="feedAlfalfa">Beda (Press / Bog')</option>
+            <option value="straw" data-i18n="feedStraw">Somon (Bug'doy somoni)</option>
+            <option value="wheat" data-i18n="feedWheat">Bug'doy (Don)</option>
+            <option value="compound" data-i18n="feedCompound">Kombikorm (Maydalangan yem)</option>
+            <option value="saltPremix" data-i18n="feedSaltPremix">Yalagich tuz va mineral premiks</option>
+          </select>
+        </div>
+
+        <div class="grid grid-cols-3 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1" data-i18n="quantity">Miqdori *</label>
+            <input type="number" step="any" id="p-form-qty" required min="0.1" class="form-input text-xs" oninput="app.updatePurchaseTotalPreview()">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1" data-i18n="unit">Birligi</label>
+            <select id="p-form-unit" class="form-select text-xs">
+              <option value="kgUnit" data-i18n="kgUnit">kg</option>
+              <option value="tonUnit" data-i18n="tonUnit">tonna</option>
+              <option value="baleUnit" data-i18n="baleUnit">bog' (press)</option>
+              <option value="sackUnit" data-i18n="sackUnit">qop</option>
+              <option value="pieceUnit" data-i18n="pieceUnit">dona</option>
+              <option value="literUnit" data-i18n="literUnit">litr</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1" data-i18n="unitPrice">Birlik narxi *</label>
+            <input type="number" step="any" id="p-form-price" required min="0" class="form-input text-xs" oninput="app.updatePurchaseTotalPreview()">
+          </div>
+        </div>
+
+        <div class="p-3 bg-emerald-50 rounded-xl border border-emerald-200 flex items-center justify-between">
+          <span class="text-xs text-emerald-800 font-semibold" data-i18n="totalPrice">Jami summa:</span>
+          <span id="p-form-total-preview" class="text-base font-extrabold text-emerald-900">0 so'm</span>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1" data-i18n="paidBy">Kim to'ladi? *</label>
+            <select id="p-form-payer" class="form-select text-xs font-medium">
+              <option value="brother" data-i18n="brother">Katta akam</option>
+              <option value="me" data-i18n="me">Men</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1" data-i18n="paymentMethod">To'lov turi</label>
+            <select id="p-form-paymethod" class="form-select text-xs">
+              <option value="payCash" data-i18n="payCash">Naqd pul</option>
+              <option value="payCard" data-i18n="payCard">Karta / Perevod</option>
+              <option value="payDebt" data-i18n="payDebt">Nasiya / Qarz</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1" data-i18n="supplier">Sotuvchi / Bozor</label>
+          <input type="text" id="p-form-supplier" placeholder="Sotuvchi ismi yoki bozor nomi" class="form-input text-xs">
+        </div>
+
+        <div class="flex items-center gap-2 pt-1">
+          <input type="checkbox" id="p-form-add-to-stock" class="w-4 h-4 text-emerald-600 rounded border-slate-300">
+          <label for="p-form-add-to-stock" class="text-xs text-slate-700 font-medium cursor-pointer" data-i18n="addToStockFromPurchase">
+            Ushbu xarid ombor zaxirasiga avtomatik qo'shilsin
+          </label>
+        </div>
+
+        <div class="pt-2 flex justify-end gap-2 border-t border-slate-100">
+          <button type="button" onclick="app.closePurchaseModal()" class="btn-secondary text-xs" data-i18n="cancel">Bekor qilish</button>
+          <button type="submit" class="btn-primary text-xs" data-i18n="save">Saqlash</button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: UPDATE FLOCK COUNT ================= -->
+  <div id="modal-flock" class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay hidden">
+    <div class="bg-white rounded-2xl shadow-xl max-w-md w-full overflow-hidden border border-slate-200">
+      <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+        <h3 id="modal-flock-title" class="font-bold text-slate-800 text-base" data-i18n="updateFlockBtn">Suruvni yangilash</h3>
+        <button onclick="app.closeFlockModal()" class="text-slate-400 hover:text-slate-600">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <form id="flock-form" onsubmit="app.handleFlockSubmit(event)" class="p-6 space-y-4">
+        <input type="hidden" id="f-form-id">
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1" data-i18n="count">Bosh soni *</label>
+          <input type="number" id="f-form-count" required min="0" class="form-input text-sm">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1" data-i18n="avgWeight">O'rtacha vazn (kg)</label>
+          <input type="number" step="any" id="f-form-weight" class="form-input text-sm">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1" data-i18n="notes">Izoh</label>
+          <input type="text" id="f-form-notes" class="form-input text-sm">
+        </div>
+        <div class="pt-2 flex justify-end gap-2 border-t border-slate-100">
+          <button type="button" onclick="app.closeFlockModal()" class="btn-secondary text-xs" data-i18n="cancel">Bekor qilish</button>
+          <button type="submit" class="btn-primary text-xs" data-i18n="save">Saqlash</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: UPDATE FEED STOCK ================= -->
+  <div id="modal-stock" class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay hidden">
+    <div class="bg-white rounded-2xl shadow-xl max-w-md w-full overflow-hidden border border-slate-200">
+      <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+        <h3 id="modal-stock-title" class="font-bold text-slate-800 text-base" data-i18n="feedStockModal">Ombor qoldig'ini yangilash</h3>
+        <button onclick="app.closeStockModal()" class="text-slate-400 hover:text-slate-600">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <form id="stock-form" onsubmit="app.handleStockSubmit(event)" class="p-6 space-y-4">
+        <input type="hidden" id="s-form-id">
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1" data-i18n="currentStock">Ombordagi yangi qoldiq miqdor *</label>
+          <input type="number" step="any" id="s-form-stock" required min="0" class="form-input text-sm">
+          <p id="s-form-unit-hint" class="text-[11px] text-slate-400 mt-1"></p>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1" data-i18n="unitPrice">Birlik narxi (so'm)</label>
+          <input type="number" step="any" id="s-form-price" min="0" class="form-input text-sm">
+        </div>
+        <div class="pt-2 flex justify-end gap-2 border-t border-slate-100">
+          <button type="button" onclick="app.closeStockModal()" class="btn-secondary text-xs" data-i18n="cancel">Bekor qilish</button>
+          <button type="submit" class="btn-primary text-xs" data-i18n="save">Saqlash</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: IMPORT DATA ================= -->
+  <div id="modal-import" class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay hidden">
+    <div class="bg-white rounded-2xl shadow-xl max-w-md w-full overflow-hidden border border-slate-200">
+      <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+        <h3 class="font-bold text-slate-800 text-base" data-i18n="importData">Fayldan tiklash</h3>
+        <button onclick="app.closeImportModal()" class="text-slate-400 hover:text-slate-600">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="p-6 space-y-4">
+        <p class="text-xs text-slate-600">Ilgari yuklab olingan JSON zaxira faylini tanlang:</p>
+        <input type="file" id="import-file-input" accept=".json" class="w-full text-xs">
+        <div class="pt-2 flex justify-end gap-2 border-t border-slate-100">
+          <button onclick="app.closeImportModal()" class="btn-secondary text-xs" data-i18n="cancel">Bekor qilish</button>
+          <button onclick="app.handleImportSubmit()" class="btn-primary text-xs" data-i18n="save">Tiklash</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= FOOTER ================= -->
+  <footer class="bg-white border-t border-slate-200 py-6 mt-12 no-print">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
+      <div class="flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
+        <strong class="text-slate-700">Otam Fermasi</strong> &copy; 2026. Barcha huquqlar himoyalangan.
+      </div>
+      <div class="flex items-center gap-4">
+        <span data-i18n="offlineNotice">Barcha ma'lumotlar xavfsiz saqlanmoqda.</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Application Logic Scripts -->
+  <script src="js/translations.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/calculator.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="js/app.js"></script>
+
+</body>
+</html>
