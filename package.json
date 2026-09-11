@@ -1,14 +1,14 @@
-﻿{
-  " name\: \otam-fermasi\,
- \version\: \1.0.0\,
- \description\: \Otam Fermasi - Qoychilik Xojaligi Boshqaruv Tizimi\,
- \main\: \server.js\,
- \scripts\: {
- \start\: \node server.js\
- },
- \engines\: {
- \node\: \>=16.0.0\
- },
- \author\: \Otam Fermasi\,
- \license\: \ISC\
+{
+  "name": "otam-fermasi",
+  "version": "1.0.0",
+  "description": "Otam Fermasi - Qoychilik Xojaligi Boshqaruv Tizimi",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "author": "Otam Fermasi",
+  "license": "ISC"
 }
